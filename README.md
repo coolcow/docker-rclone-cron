@@ -1,59 +1,51 @@
-# farmcoolcow/rclone-cron
+# ghcr.io/coolcow/rclone-cron
 
-[![](https://img.shields.io/badge/  FROM  -farmcoolcow/rclone-lightgray.svg)](https://hub.docker.com/r/farmcoolcow/rclone) [![](https://images.microbadger.com/badges/commit/farmcoolcow/rclone-cron.svg)](https://github.com/coolcow/docker_rclone-cron/commits/master) [![](https://images.microbadger.com/badges/image/farmcoolcow/rclone-cron.svg)](https://microbadger.com/images/farmcoolcow/rclone-cron) [![](https://images.microbadger.com/badges/license/farmcoolcow/rclone-cron.svg)](https://raw.githubusercontent.com/coolcow/docker_rclone-cron/master/LICENSE.txt)
-
----
-
-## What is Rclone ?
-
-*rsync for cloud storage*
-
-Rclone is a command line program to sync files and directories to and from cloud storage.
-More informations on [the official Rclone website](http://rclone.org/).
+This image extends [ghcr.io/coolcow/rclone](https://github.com/coolcow/docker-rclone) with cron support for scheduled sync jobs.
 
 ---
 
-## How to use this image
+## About
 
-This image is based on [farmcoolcow/rclone](https://hub.docker.com/r/farmcoolcow/rclone), which is more appropriate for using the rclone command line directly.  
-I recommend using **farmcoolcow/rclone** if you want to create or edit the rclone configuration file, or if you want to sync your files only once.
+For a full description, features, configuration options, and usage examples for Rclone, see the [docker-rclone README](https://github.com/coolcow/docker-rclone#readme).
 
-The default **ENTRYPOINT** is ```/entrypoint_crond.sh``` and the default **CMD** is ```-f```.
+This image only adds cron support for running scheduled sync jobs inside the container.
 
-The available environment variables are:
-  * ```PUID``` (default = **1000**)  
-    The user id of the user created inside the docker container.
-  * ```PGID``` (default = **1000**)  
-    The group id of the user created inside the docker container.
+---
 
-  > Use the environment variables ```PUID``` and ```PGID``` to execute rclone with the **uid** and **gid** of your user. This prevents permission problems while accessing your data.
+## Usage
 
+Mount your rclone config and crontab file, then set the `CROND_CRONTAB` environment variable:
 
-  * crontab file:
-  
-  > Syncs your data directory with your cloud storage every two hours. Uses a lock file to prevent the execution if the previous execution is not yet finished. Creates a new unique log file in your logs directory.  
-  > Take a look at [the rclone command list](http://rclone.org/commands/) to see all the available commands.
-  
-  ```crontab
-  0 */2 * * * flock -n ~/rclone.lock rclone sync --log-file /logs/rclone.$(date +%Y%m%d_%H%M%S).log /data cloudstorage: &
-  ```
-  
-  ---
-  
-  * Docker command:
+```sh
+docker run --rm \
+  -e PUID=$(id -u) \
+  -e PGID=$(id -g) \
+  -e CROND_CRONTAB=/crontab \
+  -v /path/to/rclone.conf:/home/.rclone.conf:ro \
+  -v /path/to/data:/data \
+  -v /path/to/logs:/logs \
+  -v /path/to/crontab:/crontab:ro \
+  ghcr.io/coolcow/rclone-cron
+```
 
-  ```sh
-  docker run -d \
-    -e PUID=$(id -u $(whoami)) \
-    -e PGID=$(id -g $(whoami)) \
-    -v <PATH_TO_YOUR_CONF>:/home/.rclone.conf \
-    -v <PATH_TO_YOUR_DATA>:/data \
-    -v <PATH_TO_YOUR_CRONTAB>:/crontab \
-    -v <PATH_TO_YOUR_LOGS>:/logs \
-    farmcoolcow/rclone-cron
-  ```
-  
-  > Replace ```<PATH_TO_YOUR_CONF>``` with the file-path of your rclone configuration file.  
-  > Replace ```<PATH_TO_YOUR_DATA>``` with the directory-path of your data directory.  
-  > Replace ```<PATH_TO_YOUR_CRONTAB>``` with the file-path of your crontab file.  
-  > Replace ```<PATH_TO_YOUR_LOGS>``` with the directory-path of your log directory.
+Example crontab entry (in `/path/to/crontab`):
+
+```
+0 */2 * * * flock -n ~/rclone.lock rclone sync --log-file /logs/rclone.$(date +\%Y\%m\%d_\%H\%M\%S).log /data cloudstorage:
+```
+
+---
+
+## Environment Variables
+
+See [docker-rclone Environment Variables](https://github.com/coolcow/docker-rclone#environment-variables) for all options. This image adds:
+
+| Variable         | Default   | Description                           |
+|------------------|-----------|---------------------------------------|
+| `CROND_CRONTAB`  | /crontab  | Path to crontab file in the container |
+
+---
+
+## License
+
+GPL-3.0. See [LICENSE.txt](LICENSE.txt) for details.
