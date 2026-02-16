@@ -8,7 +8,7 @@ Deprecated image: `ghcr.io/coolcow/rclone-cron` (formerly `farmcoolcow/rclone-cr
 
 ## Use this instead
 
-=> `ghcr.io/coolcow/rclone:2.0.0` (or above)
+=> `ghcr.io/coolcow/rclone:1.1.0` (or above)
 
 Github repository: [coolcow/docker-rclone](https://github.com/coolcow/docker-rclone)
 
