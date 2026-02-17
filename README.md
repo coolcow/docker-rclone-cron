@@ -1,13 +1,13 @@
-# Deprecated
+# ⚠️ DEPRECATED
 
-This repository is archived and kept only for historical discoverability.
+This repository is archived and kept for historical reference only.
 
-## Do not use for new deployments
+## Do Not Use for New Deployments
 
-Deprecated image: `ghcr.io/coolcow/rclone-cron` (formerly `farmcoolcow/rclone-cron`)
+Deprecated image:
 
-## Use this instead
+`ghcr.io/coolcow/rclone-cron` (formerly `farmcoolcow/rclone-cron`)
 
-=> `ghcr.io/coolcow/rclone:1.1.0` (or above)
+## Recommended Replacement
 
-Github repository: [coolcow/docker-rclone](https://github.com/coolcow/docker-rclone)
+`ghcr.io/coolcow/rclone` (GitHub repository: [coolcow/docker-rclone](https://github.com/coolcow/docker-rclone))
